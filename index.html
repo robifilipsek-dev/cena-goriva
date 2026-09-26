@@ -80,11 +80,9 @@ input[type=number] { -moz-appearance: textfield; }
         <p class="text-xs text-zinc-400 mt-0.5">Slovenija • Shranjevanje cene na napravi</p>
       </div>
       <div class="flex items-center gap-2">
-        <!-- Gumb za namestitev aplikacije -->
         <button id="installAppBtn" onclick="installPWA()" title="Namesti aplikacijo" class="hidden w-10 h-10 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-amber-400 items-center justify-center shrink-0 transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
         </button>
-        <!-- Ikona goriva -->
         <div id="fuel-icon-bg" class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 transition-colors duration-200">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z"/>
@@ -175,31 +173,25 @@ let fuelData = {
   petrol: { price: '', discount: '0', historyLabels: [], historyPrices: [], lastDate: '' }
 };
 
-// Generiranje pravega PNG formata ikone preko Canvas-a z ozadjem (za lep prikaz na Androidu/iOS)
 function generatePumpPngDataUrl(size = 512) {
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext('2d');
 
-  // Temno ozadje z blagim robom
   ctx.fillStyle = '#09090b';
   ctx.beginPath();
   ctx.roundRect(0, 0, size, size, size * 0.22);
   ctx.fill();
 
-  // Zunanji sijaj/obroba
   ctx.strokeStyle = '#27272a';
   ctx.lineWidth = size * 0.03;
   ctx.stroke();
 
-  // Izris ikone črpalke v zlato-rumeni barvi (#f59e0b)
   ctx.fillStyle = '#f59e0b';
-  
   const pathData = new Path2D('M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z');
 
   ctx.save();
-  // Scaliranje SVG poti (original je 24x24) na velikost canvasa
   const scale = (size * 0.55) / 24;
   const offset = (size - 24 * scale) / 2;
   ctx.translate(offset, offset);
@@ -210,11 +202,9 @@ function generatePumpPngDataUrl(size = 512) {
   return canvas.toDataURL('image/png');
 }
 
-// Ustvarjanje dinamičnega manifest.json z Base64 PNG ikono
 function injectDynamicManifest() {
   const pngDataUri = generatePumpPngDataUrl(512);
 
-  // Dodamo še apple-touch-icon za iOS naprave
   let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
   if (!appleIcon) {
     appleIcon = document.createElement('link');
@@ -231,18 +221,8 @@ function injectDynamicManifest() {
     background_color: "#09090b",
     theme_color: "#09090b",
     icons: [
-      {
-        src: pngDataUri,
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "any"
-      },
-      {
-        src: pngDataUri,
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "maskable"
-      }
+      { src: pngDataUri, sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: pngDataUri, sizes: "512x512", type: "image/png", purpose: "maskable" }
     ]
   };
 
@@ -259,7 +239,6 @@ function injectDynamicManifest() {
   manifestLink.href = manifestURL;
 }
 
-// Logika zaznavanja načina delovanja in prikaza gumba za namestitev
 function checkInstallState() {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
   const installBtn = document.getElementById('installAppBtn');
@@ -404,7 +383,7 @@ function saveCurrentTabInputs() {
 
   const discountKey = activeTab === 'diesel' ? 'diesel_discount' : 'petrol95_discount';
 
-  localStorage.setItem(activeTab + '_price', p);
+  if (p !== '') localStorage.setItem(activeTab + '_price', p);
   localStorage.setItem(discountKey, d);
   localStorage.setItem('fuel_liters', l);
 }
@@ -418,7 +397,7 @@ function loadTabInputs() {
   }
 
   document.getElementById('fuel-price').value = fuelData[activeTab].price || '';
-  document.getElementById('discount').value = fuelData[activeTab].discount || '0';
+  document.getElementById('discount').value = fuelData[activeTab].discount !== undefined ? fuelData[activeTab].discount : '0';
   
   const savedLiters = localStorage.getItem('fuel_liters');
   document.getElementById('liters').value = savedLiters !== null ? savedLiters : '';
@@ -632,12 +611,13 @@ async function fetchFuelPrices() {
 function loadSavedData() {
   injectDynamicManifest();
 
+  // Najprej preberemo shranjene podatke iz localStorage za oba zavihka
   const savedDieselPrice = localStorage.getItem('diesel_price');
   const savedDieselDiscount = localStorage.getItem('diesel_discount');
   const savedDieselHistory = localStorage.getItem('diesel_history');
 
   if (savedDieselPrice) fuelData.diesel.price = savedDieselPrice;
-  if (savedDieselDiscount) fuelData.diesel.discount = savedDieselDiscount;
+  if (savedDieselDiscount !== null) fuelData.diesel.discount = savedDieselDiscount;
   if (savedDieselHistory) {
     const h = JSON.parse(savedDieselHistory);
     fuelData.diesel.historyLabels = h.labels;
@@ -652,7 +632,7 @@ function loadSavedData() {
   const savedPetrolHistory = localStorage.getItem('petrol95_history');
 
   if (savedPetrolPrice) fuelData.petrol.price = savedPetrolPrice;
-  if (savedPetrolDiscount) fuelData.petrol.discount = savedPetrolDiscount;
+  if (savedPetrolDiscount !== null) fuelData.petrol.discount = savedPetrolDiscount;
   if (savedPetrolHistory) {
     const h = JSON.parse(savedPetrolHistory);
     fuelData.petrol.historyLabels = h.labels;
