@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Izračun cene goriva — dizel & bencin 95</title>
+<!-- Ikone in Web App Manifest za PWA namestitev na telefon -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z'/%3E%3C/svg%3E">
 <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Izracun%20cene%20goriva%22%2C%22short_name%22%3A%22Gorivo%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%2309090b%22%2C%22theme_color%22%3A%22%2309090b%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27%2523f59e0b%27%253E%253Cpath%20d%3D%27M14%202H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0%2018H6V4h8v16zM8%206h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17%2010.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%20512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
@@ -74,16 +75,18 @@ input[type=number] { -moz-appearance: textfield; }
 
   <div class="card p-6 space-y-6 relative overflow-hidden">
     
-    <!-- Glava kartice z gumbi in nazivom -->
+    <!-- Glava kartice z gumbom za PWA namestitev na desni strani -->
     <div class="flex items-center justify-between border-b border-zinc-800 pb-4">
       <div>
         <h1 id="app-title" class="text-xl font-extrabold tracking-tight text-white">Izračun cene dizla</h1>
         <p class="text-xs text-zinc-400 mt-0.5">Slovenija • Shranjevanje cene na napravi</p>
       </div>
       <div class="flex items-center gap-2">
+        <!-- Gumb za namestitev aplikacije (skrit, dokler ga brskalnik ne omogoči s 'beforeinstallprompt') -->
         <button id="installAppBtn" onclick="installPWA()" title="Namesti aplikacijo" class="hidden w-10 h-10 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-amber-400 flex items-center justify-center shrink-0 transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
         </button>
+        <!-- Ikona goriva -->
         <div id="fuel-icon-bg" class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 transition-colors duration-200">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z"/>
@@ -189,7 +192,7 @@ let fuelData = {
   }
 };
 
-// PWA Namestitveni dogodki
+// PWA Namestitveni dogodki (točno kot v dizl.html)
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -201,7 +204,9 @@ async function installPWA() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') console.log('Aplikacija nameščena');
+    if (outcome === 'accepted') {
+      console.log('Aplikacija nameščena');
+    }
     deferredPrompt = null;
     const btn = document.getElementById('installAppBtn');
     if (btn) btn.classList.add('hidden');
@@ -268,7 +273,11 @@ function switchFuelTab(tab) {
     finalPrice.className = "text-2xl md:text-3xl font-extrabold text-amber-400 result mt-0.5 transition-colors duration-200";
     
     copyBtn.className = "px-3 py-2 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-400 active:scale-95 text-zinc-950 transition-all duration-200 shadow-md";
-    if (installBtn) installBtn.className = "hidden w-10 h-10 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-amber-400 flex items-center justify-center shrink-0 transition-colors";
+    
+    if (installBtn) {
+      installBtn.classList.remove('text-cyan-400');
+      installBtn.classList.add('text-amber-400');
+    }
   } else {
     bodyEl.className = "theme-petrol bg-zinc-950 text-zinc-100 min-h-screen p-4 md:p-8 flex items-center justify-center";
 
@@ -288,7 +297,11 @@ function switchFuelTab(tab) {
     finalPrice.className = "text-2xl md:text-3xl font-extrabold text-cyan-400 result mt-0.5 transition-colors duration-200";
 
     copyBtn.className = "px-3 py-2 text-xs font-bold rounded-lg bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-zinc-950 transition-all duration-200 shadow-md";
-    if (installBtn) installBtn.className = "hidden w-10 h-10 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-cyan-400 flex items-center justify-center shrink-0 transition-colors";
+    
+    if (installBtn) {
+      installBtn.classList.remove('text-amber-400');
+      installBtn.classList.add('text-cyan-400');
+    }
   }
 
   loadTabInputs();
@@ -485,7 +498,7 @@ async function fetchFuelPrices() {
         fuelData.diesel.historyLabels = dChart.map(i => i.label);
         fuelData.diesel.historyPrices = dChart.map(i => i.price);
 
-        // bencin 95
+        // Bencin 95
         petrolHistory.sort((a, b) => a.startDate - b.startDate);
         let currentPetrol = petrolHistory.find(item => today >= item.startDate && today <= item.endDate) || petrolHistory[petrolHistory.length - 1];
         let pChart = [...petrolHistory].sort((a, b) => b.startDate - a.startDate).slice(0, 8).reverse();
