@@ -114,7 +114,7 @@ input[type=number] { -moz-appearance: textfield; }
 
       <div>
         <label class="label">Količina točenega goriva [litri]</label>
-        <input id="liters" class="input" type="number" step="0.01" placeholder="40" oninput="calculate()" onkeypress="allowComma(event)">
+        <input id="liters" class="input" type="number" step="0.01" oninput="calculate()" onkeypress="allowComma(event)">
       </div>
 
       <div>
@@ -402,19 +402,26 @@ function saveCurrentTabInputs() {
   fuelData[activeTab].price = p;
   fuelData[activeTab].discount = d;
 
+  const discountKey = activeTab === 'diesel' ? 'diesel_discount' : 'petrol95_discount';
+
   localStorage.setItem(activeTab + '_price', p);
-  localStorage.setItem(activeTab + '_discount', d);
+  localStorage.setItem(discountKey, d);
   localStorage.setItem('fuel_liters', l);
 }
 
 function loadTabInputs() {
+  const discountKey = activeTab === 'diesel' ? 'diesel_discount' : 'petrol95_discount';
+  const savedDiscount = localStorage.getItem(discountKey);
+
+  if (savedDiscount !== null) {
+    fuelData[activeTab].discount = savedDiscount;
+  }
+
   document.getElementById('fuel-price').value = fuelData[activeTab].price || '';
   document.getElementById('discount').value = fuelData[activeTab].discount || '0';
   
   const savedLiters = localStorage.getItem('fuel_liters');
-  if (savedLiters !== null) {
-    document.getElementById('liters').value = savedLiters;
-  }
+  document.getElementById('liters').value = savedLiters !== null ? savedLiters : '';
 }
 
 function calculate() {
@@ -429,8 +436,10 @@ function calculate() {
   fuelData[activeTab].price = priceInput;
   fuelData[activeTab].discount = discountInput;
 
+  const discountKey = activeTab === 'diesel' ? 'diesel_discount' : 'petrol95_discount';
+
   if (priceInput !== '') localStorage.setItem(activeTab + '_price', priceInput);
-  localStorage.setItem(activeTab + '_discount', discountInput);
+  localStorage.setItem(discountKey, discountInput);
   localStorage.setItem('fuel_liters', litersInput);
 
   let discountPerLitre = discountCents / 100;
