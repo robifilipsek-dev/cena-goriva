@@ -5,16 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Izračun cene goriva — dizel & bencin 95</title>
 
-<!-- Dinamična SVG ikona črpalke za PC zaznamke in vse brskalnike -->
+<!-- Standardna SVG ikona za PC brskalnik (zaznamki, zavihki) -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z'/></svg>">
-
-<!-- Fallbackikone za starejše naprave in klasične datoteke -->
-<link rel="icon" type="image/png" sizes="32x32" href="icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
-
-<!-- Povezava na manifest za Android -->
-<link rel="manifest" href="manifest.json">
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -183,10 +175,53 @@ let fuelData = {
   petrol: { price: '', discount: '0', historyLabels: [], historyPrices: [], lastDate: '' }
 };
 
-// Generiranje dinamičnega manifest.json z ikono črpalke za Android
+// Generiranje pravega PNG formata ikone preko Canvas-a z ozadjem (za lep prikaz na Androidu/iOS)
+function generatePumpPngDataUrl(size = 512) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+
+  // Temno ozadje z blagim robom
+  ctx.fillStyle = '#09090b';
+  ctx.beginPath();
+  ctx.roundRect(0, 0, size, size, size * 0.22);
+  ctx.fill();
+
+  // Zunanji sijaj/obroba
+  ctx.strokeStyle = '#27272a';
+  ctx.lineWidth = size * 0.03;
+  ctx.stroke();
+
+  // Izris ikone črpalke v zlato-rumeni barvi (#f59e0b)
+  ctx.fillStyle = '#f59e0b';
+  
+  const pathData = new Path2D('M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z');
+
+  ctx.save();
+  // Scaliranje SVG poti (original je 24x24) na velikost canvasa
+  const scale = (size * 0.55) / 24;
+  const offset = (size - 24 * scale) / 2;
+  ctx.translate(offset, offset);
+  ctx.scale(scale, scale);
+  ctx.fill(pathData);
+  ctx.restore();
+
+  return canvas.toDataURL('image/png');
+}
+
+// Ustvarjanje dinamičnega manifest.json z Base64 PNG ikono
 function injectDynamicManifest() {
-  const svgPump = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z'/></svg>`;
-  const svgDataUri = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgPump)));
+  const pngDataUri = generatePumpPngDataUrl(512);
+
+  // Dodamo še apple-touch-icon za iOS naprave
+  let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+  if (!appleIcon) {
+    appleIcon = document.createElement('link');
+    appleIcon.rel = 'apple-touch-icon';
+    document.head.appendChild(appleIcon);
+  }
+  appleIcon.href = pngDataUri;
 
   const manifestData = {
     name: "Cene Goriva",
@@ -197,15 +232,16 @@ function injectDynamicManifest() {
     theme_color: "#09090b",
     icons: [
       {
-        src: svgDataUri,
-        sizes: "192x192 512x512",
-        type: "image/svg+xml",
-        purpose: "any maskable"
+        src: pngDataUri,
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any"
       },
       {
-        src: "icon.png",
-        sizes: "192x192",
-        type: "image/png"
+        src: pngDataUri,
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable"
       }
     ]
   };
@@ -215,9 +251,12 @@ function injectDynamicManifest() {
   const manifestURL = URL.createObjectURL(blob);
   
   let manifestLink = document.querySelector('link[rel="manifest"]');
-  if (manifestLink) {
-    manifestLink.setAttribute('href', manifestURL);
+  if (!manifestLink) {
+    manifestLink = document.createElement('link');
+    manifestLink.rel = 'manifest';
+    document.head.appendChild(manifestLink);
   }
+  manifestLink.href = manifestURL;
 }
 
 // Logika zaznavanja načina delovanja in prikaza gumba za namestitev
