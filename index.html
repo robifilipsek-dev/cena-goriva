@@ -5,10 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Izračun cene goriva — dizel & bencin 95</title>
 
-<!-- Ikona točilne ročke (črpalke) za zaznamke, PWA in iPhone/Android nameščene aplikacije -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z'/%3E%3C/svg%3E">
-<link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Izracun%20cene%20goriva%22%2C%22short_name%22%3A%22Gorivo%22%2C%22start_url%22%3A%22%2Fcena-goriva%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%2309090b%22%2C%22theme_color%22%3A%22%2309090b%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27%2523f59e0b%27%253E%253Cpath%20d%3D%27M14%202H6a2%202%200%200%200-2%202v16a2%202%200%200%202%202h8a2%202%200%200%202-2V4a2%202%200%200-2-2zm0%2018H6V4h8v16zM8%206h4v4H8V6zm11.29-2.29a1%201%200%200%200-1.42%200L15.17%206.3a1%201%200%200%200%200%201.42l1.42%201.42a1%201%200%200%200%201.42%200l2.71-2.71a1%201%200%200%200%200-1.42zM17%2010.41V13a3%203%200%200%201-3%203h-1v2h1a5%205%200%200%200%205-5v-2.59z%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%20512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+<!-- Dinamična SVG ikona črpalke za PC zaznamke in vse brskalnike -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z'/></svg>">
+
+<!-- Fallbackikone za starejše naprave in klasične datoteke -->
+<link rel="icon" type="image/png" sizes="32x32" href="icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+
+<!-- Povezava na manifest za Android -->
+<link rel="manifest" href="manifest.json">
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -75,14 +81,14 @@ input[type=number] { -moz-appearance: textfield; }
 
   <div class="card p-6 space-y-6 relative overflow-hidden">
     
-    <!-- Glava kartice z gumbom za PWA namestitev (če še ni nameščeno) -->
+    <!-- Glava kartice z gumbom za PWA namestitev -->
     <div class="flex items-center justify-between border-b border-zinc-800 pb-4">
       <div>
         <h1 id="app-title" class="text-xl font-extrabold tracking-tight text-white">Izračun cene dizla</h1>
         <p class="text-xs text-zinc-400 mt-0.5">Slovenija • Shranjevanje cene na napravi</p>
       </div>
       <div class="flex items-center gap-2">
-        <!-- Gumb za namestitev aplikacije - skrit samodejno po namestitvi -->
+        <!-- Gumb za namestitev aplikacije -->
         <button id="installAppBtn" onclick="installPWA()" title="Namesti aplikacijo" class="hidden w-10 h-10 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-amber-400 items-center justify-center shrink-0 transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
         </button>
@@ -95,7 +101,7 @@ input[type=number] { -moz-appearance: textfield; }
       </div>
     </div>
 
-    <!-- Vnosna polja za izračun -->
+    <!-- Vnosna polja -->
     <div class="space-y-4">
       <div>
         <div class="flex justify-between items-center mb-1">
@@ -149,7 +155,7 @@ input[type=number] { -moz-appearance: textfield; }
       </div>
     </div>
 
-    <!-- Sekcija za grafikon zgodovine cen -->
+    <!-- Grafikon -->
     <div class="border-t border-zinc-800 pt-5 space-y-3">
       <div class="flex items-center justify-between">
         <span id="chart-title" class="text-xs font-bold text-zinc-300 uppercase tracking-wider">Gibanje cene dizla (Zadnja 2 meseca)</span>
@@ -162,7 +168,6 @@ input[type=number] { -moz-appearance: textfield; }
 
   </div>
 
-  <!-- Obvestilo / Toast -->
   <div id="toast" class="toast-msg pointer-events-none fixed bottom-4 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-zinc-200 px-4 py-2 rounded-xl text-xs font-semibold shadow-xl z-50 text-center">
     Znesek kopiran v odložišče!
   </div>
@@ -178,17 +183,55 @@ let fuelData = {
   petrol: { price: '', discount: '0', historyLabels: [], historyPrices: [], lastDate: '' }
 };
 
-// Preverjanje stanja namestitve PWA
+// Generiranje dinamičnega manifest.json z ikono črpalke za Android
+function injectDynamicManifest() {
+  const svgPump = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h8v16zM8 6h4v4H8V6zm11.29-2.29a1 1 0 0 0-1.42 0L15.17 6.3a1 1 0 0 0 0 1.42l1.42 1.42a1 1 0 0 0 1.42 0l2.71-2.71a1 1 0 0 0 0-1.42zM17 10.41V13a3 3 0 0 1-3 3h-1v2h1a5 5 0 0 0 5-5v-2.59z'/></svg>`;
+  const svgDataUri = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgPump)));
+
+  const manifestData = {
+    name: "Cene Goriva",
+    short_name: "Gorivo",
+    start_url: "./",
+    display: "standalone",
+    background_color: "#09090b",
+    theme_color: "#09090b",
+    icons: [
+      {
+        src: svgDataUri,
+        sizes: "192x192 512x512",
+        type: "image/svg+xml",
+        purpose: "any maskable"
+      },
+      {
+        src: "icon.png",
+        sizes: "192x192",
+        type: "image/png"
+      }
+    ]
+  };
+
+  const stringManifest = JSON.stringify(manifestData);
+  const blob = new Blob([stringManifest], {type: 'application/json'});
+  const manifestURL = URL.createObjectURL(blob);
+  
+  let manifestLink = document.querySelector('link[rel="manifest"]');
+  if (manifestLink) {
+    manifestLink.setAttribute('href', manifestURL);
+  }
+}
+
+// Logika zaznavanja načina delovanja in prikaza gumba za namestitev
 function checkInstallState() {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
   const installBtn = document.getElementById('installAppBtn');
-  
-  if (isStandalone || localStorage.getItem('pwa_installed') === 'true') {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+  if (isStandalone) {
     if (installBtn) {
       installBtn.classList.add('hidden');
       installBtn.classList.remove('flex');
     }
-  } else if (deferredPrompt) {
+  } else if (deferredPrompt || isIOS) {
     if (installBtn) {
       installBtn.classList.remove('hidden');
       installBtn.classList.add('flex');
@@ -196,7 +239,6 @@ function checkInstallState() {
   }
 }
 
-// PWA Logika Namestitve
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -208,21 +250,21 @@ async function installPWA() {
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
-      localStorage.setItem('pwa_installed', 'true');
       checkInstallState();
     }
     deferredPrompt = null;
   } else {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (isIOS) {
-      showToast("Za namestitev na iOS klikni 'Deli' (Share) in izberi 'Dodaj na domači zaslon'!");
+      showToast("Klikni gumb 'Deli' (spodaj v Safariju) in izberi 'Dodaj na domači zaslon'!");
+    } else {
+      showToast("Aplikacijo dodaš preko menija brskalnika: 'Dodaj na domači zaslon'.");
     }
   }
 }
 
 window.addEventListener('appinstalled', () => {
   deferredPrompt = null;
-  localStorage.setItem('pwa_installed', 'true');
   checkInstallState();
   showToast("Aplikacija je bila uspešno nameščena!");
 });
@@ -540,6 +582,8 @@ async function fetchFuelPrices() {
 }
 
 function loadSavedData() {
+  injectDynamicManifest();
+
   const savedDieselPrice = localStorage.getItem('diesel_price');
   const savedDieselDiscount = localStorage.getItem('diesel_discount');
   const savedDieselHistory = localStorage.getItem('diesel_history');
@@ -603,7 +647,7 @@ function showToast(msg) {
   toast.classList.add('show');
   setTimeout(() => {
     toast.classList.remove('show');
-  }, 3000);
+  }, 3500);
 }
 
 window.onload = () => {
