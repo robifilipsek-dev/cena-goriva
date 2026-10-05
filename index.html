@@ -27,7 +27,8 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;padding:4px;background:var(--soft);border-radius:16px}
 .seg button{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 8px;border-radius:12px;font-size:13px;font-weight:700;color:var(--mu);transition:all .2s}
 .seg button[aria-pressed=true]{background:var(--card);color:var(--act);box-shadow:0 1px 4px rgba(0,0,0,.18)}
-.seg.sm button{padding:7px 6px;font-size:12px;border-radius:11px}
+.seg.sm button{padding:7px 2px;font-size:12px;border-radius:11px;white-space:nowrap}
+.in::placeholder{color:var(--mu);font-weight:600;opacity:.8}
 .card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:26px;display:grid;gap:26px;transition:background .3s,border-color .3s;box-shadow:var(--sh),inset 0 1px 0 color-mix(in srgb,#fff 7%,transparent)}
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
 h1{font-size:24px;line-height:1.15}
@@ -62,11 +63,11 @@ input[type=number]{-moz-appearance:textfield}
 .kv{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--mu)}
 .kv b{font-size:16px;font-weight:600;color:var(--tx)}
 .kv b.save{color:var(--down)}
-.final{margin-top:4px;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:20px 22px;border-radius:22px;background:var(--ac);color:#0c0e11;box-shadow:0 18px 34px -16px color-mix(in srgb,var(--ac) 80%,transparent),inset 0 1px 0 rgba(255,255,255,.35)}
-.final small{font-size:12.5px;font-weight:700;opacity:.7}
-.big{font-size:40px;letter-spacing:-.035em;line-height:1.1;margin-top:2px}
-.copy{background:#0c0e11;color:#fff;font-size:13px;font-weight:800;padding:12px 18px;border-radius:14px;transition:transform .15s,filter .2s}
-.copy:hover{filter:brightness(1.3)}.copy:active{transform:scale(.95)}
+.final{margin-top:4px;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-radius:20px;background:transparent;border:1.5px solid color-mix(in srgb,var(--ac) 55%,transparent);color:var(--tx)}
+.final small{font-size:12px;font-weight:700;color:var(--mu)}
+.big{font-size:34px;letter-spacing:-.035em;line-height:1.1;margin-top:2px;color:var(--act)}
+.copy{background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--act);font-size:13px;font-weight:800;padding:11px 16px;border-radius:13px;transition:transform .15s,background .2s}
+.copy:hover{background:color-mix(in srgb,var(--ac) 24%,transparent)}.copy:active{transform:scale(.95)}
 .sec{display:grid;gap:14px;padding-top:24px;border-top:1px solid var(--line)}
 .delta{font-size:15px;font-weight:600}
 .cw{position:relative;height:210px}
@@ -100,7 +101,7 @@ dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 #toast{position:fixed;bottom:18px;left:50%;transform:translate(-50%,10px);background:var(--card);border:1px solid var(--line);color:var(--tx);padding:10px 18px;border-radius:14px;font-size:12.5px;font-weight:600;box-shadow:var(--sh);opacity:0;pointer-events:none;transition:all .3s;text-align:center;max-width:90vw}
 #toast.show{opacity:1;transform:translate(-50%,0)}
-@media(max-width:420px){.card{padding:20px}.big{font-size:32px}}
+@media(max-width:420px){.card{padding:20px}.big{font-size:28px}}
 </style>
 </head>
 
@@ -109,7 +110,7 @@ dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
 
 <div class="wrap">
   <div class="seg">
-    <button id="tab-diesel" aria-pressed="true" onclick="switchFuelTab('diesel')"><svg class="ic" fill="currentColor"><use href="#pump"/></svg>Dizelsko gorivo</button>
+    <button id="tab-diesel" aria-pressed="true" onclick="switchFuelTab('diesel')"><svg class="ic" fill="currentColor"><use href="#pump"/></svg>Dizel</button>
     <button id="tab-petrol" aria-pressed="false" onclick="switchFuelTab('petrol')"><svg class="ic" fill="currentColor"><use href="#pump"/></svg>Bencin 95</button>
   </div>
 
@@ -172,7 +173,7 @@ dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
       </div>
       <div class="notefield">
         <label class="lab" for="note">Opomba</label>
-        <textarea id="note" class="in pl" maxlength="200" rows="1"></textarea>
+        <textarea id="note" class="in pl" maxlength="200" rows="1" placeholder="npr. stranka, vozilo, opomba"></textarea>
       </div>
       <button class="savebtn" onclick="saveEntry()">Shrani račun v zgodovino</button>
     </div>
@@ -187,9 +188,9 @@ dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
         <div id="chart-empty">Zgodovina cen se napolni ob osvežitvi s strani GOV.SI.</div>
       </div>
       <div class="seg sm" id="ranges">
-        <button data-m="1" onclick="setRange(1)">1 mesec</button>
-        <button data-m="3" onclick="setRange(3)">3 meseci</button>
-        <button data-m="6" onclick="setRange(6)">6 mesecev</button>
+        <button data-m="1" onclick="setRange(1)">1 mes.</button>
+        <button data-m="3" onclick="setRange(3)">3 mes.</button>
+        <button data-m="6" onclick="setRange(6)">6 mes.</button>
         <button data-m="12" onclick="setRange(12)">1 leto</button>
       </div>
     </div>
@@ -214,7 +215,7 @@ dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
       <div><label class="lab" for="e-disc">Popust [centi na liter]</label><input id="e-disc" class="in pl" type="number" step="0.1" inputmode="decimal" oninput="editPreview()" onkeypress="allowComma(event)"></div>
       <div class="notefield">
         <label class="lab" for="e-note">Opomba</label>
-        <textarea id="e-note" class="in pl" maxlength="200" rows="1"></textarea>
+        <textarea id="e-note" class="in pl" maxlength="200" rows="1" placeholder="npr. stranka, vozilo, opomba"></textarea>
       </div>
       <div class="etot"><span>Znesek</span><b id="e-total">0,00 €</b></div>
       <div class="btns">
