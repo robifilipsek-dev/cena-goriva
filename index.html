@@ -110,7 +110,7 @@ dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
 
 <div class="wrap">
   <div class="seg">
-    <button id="tab-diesel" aria-pressed="true" onclick="switchFuelTab('diesel')"><svg class="ic" fill="currentColor"><use href="#pump"/></svg>Dizel</button>
+    <button id="tab-diesel" aria-pressed="true" onclick="switchFuelTab('diesel')"><svg class="ic" fill="currentColor"><use href="#pump"/></svg>Dizelsko gorivo</button>
     <button id="tab-petrol" aria-pressed="false" onclick="switchFuelTab('petrol')"><svg class="ic" fill="currentColor"><use href="#pump"/></svg>Bencin 95</button>
   </div>
 
@@ -508,6 +508,11 @@ function updateChart() {
     ? 'Podatki so na voljo od ' + fmtDate(from, { day: 'numeric', month: 'numeric', year: 'numeric' })
     : 'Vir: GOV.SI';
 
+  const vals = pts.map(h => h.p), lo0 = Math.min(...vals), hi0 = Math.max(...vals);
+  let yMin = Math.floor(lo0 * 10 + 1e-9) / 10, yMax = Math.ceil(hi0 * 10 - 1e-9) / 10;
+  if (lo0 - yMin < 0.02) yMin -= 0.1;
+  if (yMax - hi0 < 0.02) yMax += 0.1;
+  yMin = Math.round(yMin * 10) / 10; yMax = Math.round(yMax * 10) / 10;
   const ac = cssv('--ac'), mu = cssv('--mu'), line = cssv('--line'), card = cssv('--card'), tx = cssv('--tx');
   const ff = "'Manrope', sans-serif", sd = { day: 'numeric', month: 'numeric' };
   const lo = range <= 3 ? { day: 'numeric', month: 'short' } : { month: 'short', year: '2-digit' };
@@ -550,7 +555,7 @@ function updateChart() {
       },
       scales: {
         x: { grid: { display: false }, border: { display: false }, ticks: { color: mu, font: { family: ff, size: 11 }, maxTicksLimit: 5, maxRotation: 0 } },
-        y: { grace: '8%', grid: { color: line }, border: { display: false }, ticks: { color: mu, font: { family: ff, size: 11 }, maxTicksLimit: 4, callback: v => fmt(v, 2) } }
+        y: { min: yMin, max: yMax, grid: { color: line }, border: { display: false }, ticks: { color: mu, font: { family: ff, size: 11 }, stepSize: 0.1, maxTicksLimit: 20, callback: v => fmt(v, 2) } }
       }
     }
   });
