@@ -79,7 +79,24 @@ button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .dot{width:10px;height:10px;border-radius:50%;flex:none}
 .dot.diesel{background:#f59e0b}.dot.petrol{background:#06b6d4}
 .lt{flex:1;display:grid;gap:2px;min-width:0}.lt b{font-size:15px;font-weight:800}.lt span{font-size:11.5px;color:var(--mu)}
-.x{width:30px;height:30px;border-radius:10px;color:var(--mu);font-size:18px;line-height:1}.x:hover{background:var(--line);color:var(--tx)}
+.x{width:30px;height:30px;border-radius:10px;color:var(--mu);font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;flex:none}.x:hover{background:var(--line);color:var(--tx)}
+.x .ic{width:16px;height:16px}
+.acts{display:flex;gap:2px;flex:none}
+.lt .nt{color:var(--tx);opacity:.8;font-style:italic;white-space:normal;overflow-wrap:anywhere;font-size:12px}
+.lt .meta{overflow-wrap:anywhere}
+.in.pl{padding-right:16px}
+textarea.in{resize:none;min-height:0;height:48px;padding-top:12px;padding-bottom:12px;font-size:14px;font-weight:600;line-height:1.3;overflow:auto}
+select.in{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%238d96a2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
+dialog{margin:auto;border:1px solid var(--line);background:var(--card);color:var(--tx);border-radius:26px;padding:24px;width:min(92vw,420px);max-height:92vh;overflow:auto;box-shadow:var(--sh);font-family:inherit}
+dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{padding:13px;border-radius:14px;background:var(--soft);font-size:13.5px;font-weight:800;transition:background .2s,transform .15s}
+.btn:hover{background:var(--line)}.btn:active{transform:scale(.98)}
+.btn.pri{background:var(--ac);color:#0c0e11}.btn.pri:hover{filter:brightness(1.08);background:var(--ac)}
+.btn.dng{color:var(--up);grid-column:1/-1}
+.etot{display:flex;justify-content:space-between;align-items:baseline;padding:14px 16px;border-radius:14px;background:var(--soft);font-size:13px;color:var(--mu)}
+.etot b{font-size:20px;color:var(--tx);font-weight:800;letter-spacing:-.02em}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 #toast{position:fixed;bottom:18px;left:50%;transform:translate(-50%,10px);background:var(--card);border:1px solid var(--line);color:var(--tx);padding:10px 18px;border-radius:14px;font-size:12.5px;font-weight:600;box-shadow:var(--sh);opacity:0;pointer-events:none;transition:all .3s;text-align:center;max-width:90vw}
 #toast.show{opacity:1;transform:translate(-50%,0)}
@@ -153,6 +170,10 @@ button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
         <div><small>Znesek za plačilo</small><div class="big" id="final-price">0,00 €</div></div>
         <button id="copyBtn" class="copy" onclick="copyResult()">Kopiraj</button>
       </div>
+      <div class="notefield">
+        <label class="lab" for="note">Opomba</label>
+        <textarea id="note" class="in pl" maxlength="200" rows="1"></textarea>
+      </div>
       <button class="savebtn" onclick="saveEntry()">Shrani račun v zgodovino</button>
     </div>
 
@@ -178,6 +199,31 @@ button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
       <div class="log" id="log"></div>
     </div>
   </div>
+
+  <dialog id="editDlg" aria-labelledby="edit-title">
+    <div style="display:grid;gap:16px">
+      <div class="row"><h1 id="edit-title" style="font-size:20px">Uredi račun</h1><button class="x" onclick="closeEdit()" aria-label="Zapri">×</button></div>
+      <div class="g2">
+        <div><label class="lab" for="e-date">Datum</label><input id="e-date" class="in pl" type="date"></div>
+        <div><label class="lab" for="e-fuel">Gorivo</label><select id="e-fuel" class="in pl"><option value="diesel">Dizel</option><option value="petrol">Bencin 95</option></select></div>
+      </div>
+      <div class="g2">
+        <div><label class="lab" for="e-price">Cena [€/l]</label><input id="e-price" class="in pl" type="number" step="0.001" inputmode="decimal" oninput="editPreview()" onkeypress="allowComma(event)"></div>
+        <div><label class="lab" for="e-liters">Litri</label><input id="e-liters" class="in pl" type="number" step="0.01" inputmode="decimal" oninput="editPreview()" onkeypress="allowComma(event)"></div>
+      </div>
+      <div><label class="lab" for="e-disc">Popust [centi na liter]</label><input id="e-disc" class="in pl" type="number" step="0.1" inputmode="decimal" oninput="editPreview()" onkeypress="allowComma(event)"></div>
+      <div class="notefield">
+        <label class="lab" for="e-note">Opomba</label>
+        <textarea id="e-note" class="in pl" maxlength="200" rows="1"></textarea>
+      </div>
+      <div class="etot"><span>Znesek</span><b id="e-total">0,00 €</b></div>
+      <div class="btns">
+        <button class="btn" onclick="closeEdit()">Prekliči</button>
+        <button class="btn pri" onclick="saveEdit()">Shrani spremembe</button>
+        <button class="btn dng" onclick="deleteFromEdit()">Izbriši račun</button>
+      </div>
+    </div>
+  </dialog>
 
   <div id="toast">Znesek kopiran v odložišče!</div>
 </div>
@@ -330,24 +376,88 @@ function tween(el, to, pre = '') {
 }
 
 /* ---------- Zgodovina točenj ---------- */
-let log = [];
+let log = [], editId = null;
+const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const num = v => parseFloat(String(v).replace(',', '.')) || 0;
+const EDIT_IC = '<svg class="ic" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
+
 function saveLog() { ls('fuel_log', JSON.stringify(log)); renderLog(); }
+
 function saveEntry() {
   const d = fuelData[activeTab];
-  const price = parseFloat(d.price) || 0, l = parseFloat($('liters').value.replace(',', '.')) || 0;
+  const price = num(d.price), l = num($('liters').value);
   if (!price || !l) { showToast('Vnesi ceno in količino goriva.'); return; }
-  const disc = d.useDiscount ? (parseFloat(d.discount) || 0) : 0;
-  log.unshift({ id: Date.now(), t: new Date().toISOString(), f: activeTab, p: price, l, d: disc, tot: Math.max(0, price - disc / 100) * l });
+  const disc = d.useDiscount ? num(d.discount) : 0;
+  const note = $('note').value.trim().slice(0, 200);
+  log.unshift({ id: Date.now(), t: new Date().toISOString(), f: activeTab, p: price, l, d: disc, n: note, tot: Math.max(0, price - disc / 100) * l });
   saveLog();
+  $('note').value = '';
   showToast('Račun je shranjen.');
 }
-function delEntry(id) { log = log.filter(x => x.id !== id); saveLog(); }
+
+function delEntry(id) {
+  if (!confirm('Želiš izbrisati ta račun?')) return;
+  log = log.filter(x => x.id !== id);
+  saveLog();
+  showToast('Račun je izbrisan.');
+}
+
 function renderLog() {
   const n = new Date(), ym = n.getFullYear() * 12 + n.getMonth();
   const mon = log.filter(x => { const t = new Date(x.t); return t.getFullYear() * 12 + t.getMonth() === ym; });
   const sum = mon.reduce((a, x) => a + x.tot, 0), lit = mon.reduce((a, x) => a + x.l, 0);
   $('log-sum').textContent = log.length ? 'Ta mesec: ' + fmt(sum) + ' € za ' + fmt(lit) + ' l' : 'Ni shranjenih računov';
-  $('log').innerHTML = log.map(x => `<div class="li"><span class="dot ${x.f}"></span><div class="lt"><b>${fmt(x.tot)} €</b><span>${fmtDate(new Date(x.t), { day: 'numeric', month: 'numeric', year: 'numeric' })} · ${x.f === 'diesel' ? 'Dizel' : 'Bencin 95'} · ${fmt(x.l)} l × ${fmt(x.p, 3)} €${x.d ? ' − ' + fmt(x.d, 1) + ' c' : ''}</span></div><button class="x" onclick="delEntry(${x.id})" aria-label="Izbriši račun">×</button></div>`).join('');
+  $('log').innerHTML = log.map(x => `<div class="li"><span class="dot ${x.f}"></span><div class="lt"><b>${fmt(x.tot)} €</b><span class="meta">${fmtDate(new Date(x.t), { day: 'numeric', month: 'numeric', year: 'numeric' })} · ${x.f === 'diesel' ? 'Dizel' : 'Bencin 95'} · ${fmt(x.l)} l × ${fmt(x.p, 3)} €${x.d ? ' − ' + fmt(x.d, 1) + ' c' : ''}</span>${x.n ? `<span class="nt">${esc(x.n)}</span>` : ''}</div><div class="acts"><button class="x" onclick="openEdit(${x.id})" aria-label="Uredi račun" title="Uredi">${EDIT_IC}</button><button class="x" onclick="delEntry(${x.id})" aria-label="Izbriši račun" title="Izbriši">×</button></div></div>`).join('');
+}
+
+/* ---------- Urejanje računa ---------- */
+function openEdit(id) {
+  const x = log.find(e => e.id === id);
+  if (!x) return;
+  editId = id;
+  $('e-date').value = iso(new Date(x.t));
+  $('e-fuel').value = x.f;
+  $('e-price').value = x.p;
+  $('e-liters').value = x.l;
+  $('e-disc').value = x.d || 0;
+  $('e-note').value = x.n || '';
+  editPreview();
+  $('editDlg').showModal();
+}
+
+function editPreview() {
+  const p = num($('e-price').value), l = num($('e-liters').value), d = num($('e-disc').value);
+  $('e-total').textContent = fmt(Math.max(0, p - d / 100) * l) + ' €';
+}
+
+function closeEdit() { editId = null; $('editDlg').close(); }
+
+function saveEdit() {
+  const x = log.find(e => e.id === editId);
+  if (!x) { closeEdit(); return; }
+  const price = num($('e-price').value), l = num($('e-liters').value), disc = Math.max(0, num($('e-disc').value));
+  if (!price || !l) { showToast('Vnesi ceno in količino goriva.'); return; }
+  const ds = $('e-date').value;
+  if (!ds) { showToast('Izberi datum.'); return; }
+  const old = new Date(x.t), nd = parseISO(ds);
+  nd.setHours(old.getHours(), old.getMinutes(), old.getSeconds());
+  x.t = nd.toISOString();
+  x.f = $('e-fuel').value;
+  x.p = price; x.l = l; x.d = disc;
+  x.n = $('e-note').value.trim().slice(0, 200);
+  x.tot = Math.max(0, price - disc / 100) * l;
+  log.sort((a, b) => a.t < b.t ? 1 : a.t > b.t ? -1 : b.id - a.id);
+  saveLog();
+  closeEdit();
+  showToast('Račun je posodobljen.');
+}
+
+function deleteFromEdit() {
+  if (!confirm('Želiš izbrisati ta račun?')) return;
+  log = log.filter(e => e.id !== editId);
+  saveLog();
+  closeEdit();
+  showToast('Račun je izbrisan.');
 }
 
 function switchFuelTab(tab) {
@@ -571,6 +681,8 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3500);
 }
 
+$('editDlg').addEventListener('click', e => { if (e.target === e.currentTarget) closeEdit(); });
+$('editDlg').addEventListener('close', () => { editId = null; });
 window.onload = loadSavedData;
 </script>
 </body>
