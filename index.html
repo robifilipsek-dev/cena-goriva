@@ -87,8 +87,6 @@ button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .lt .meta{overflow-wrap:anywhere}
 .month-head{padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:14px;display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:800}.month-head span{color:var(--mu);font-weight:600}
 .pills{display:flex;gap:8px;flex-wrap:wrap}.pills .link{padding:8px 12px;background:var(--soft);border-radius:11px}
-.crop-canvas{display:block;width:auto;height:auto;max-width:100%;max-height:62vh;margin:auto;border-radius:12px;background:#080a0c;touch-action:none;cursor:crosshair}
-#cropDlg{width:min(94vw,820px)}
 .receipt-thumb{max-width:110px;max-height:80px;border-radius:8px;margin-top:6px;object-fit:cover;cursor:pointer}
 .in.pl{padding-right:16px}
 textarea.in{resize:none;min-height:0;height:48px;padding-top:12px;padding-bottom:12px;font-size:14px;font-weight:600;line-height:1.3;overflow:auto}
@@ -108,6 +106,7 @@ dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:420px){.card{padding:20px}.big{font-size:28px}}
 @media(min-width:900px){body{align-items:flex-start;padding:32px}.wrap{max-width:1220px;gap:18px}.card{grid-template-columns:minmax(0,1fr) minmax(360px,.9fr);align-items:start;gap:30px;padding:34px}.card>.row:first-child{grid-column:1/-1}.card>.fields{grid-column:1}.card>.sum{grid-column:1}.card>.sec{grid-column:2}.card>.sec:nth-last-child(1){grid-row:3 / span 2}.card>.sec:nth-last-child(2){grid-row:2}.log{max-height:70vh}.cw{height:280px}}
+.photo-actions{margin-top:10px}
 </style>
 </head>
 
@@ -128,7 +127,6 @@ dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
       </div>
       <div class="row" style="gap:8px">
         <button id="authBtn" class="link" onclick="googleSignIn()">Prijava z Google</button>
-        <button class="link" onclick="openGeminiSettings()" title="Nastavitve Gemini API" aria-label="Nastavitve Gemini API">Gemini ključ</button>
         <button id="installAppBtn" class="ib" onclick="installPWA()" title="Namesti aplikacijo" aria-label="Namesti aplikacijo">
           <svg class="ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
         </button>
@@ -183,7 +181,7 @@ dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
         <label class="lab" for="note">Opomba</label>
         <input id="note" class="in pl" maxlength="200" list="saved-notes" placeholder="npr. stranka, vozilo, opomba"><datalist id="saved-notes"></datalist>
         <input id="receipt-photo-camera" type="file" accept="image/*" capture="environment" hidden onchange="readReceiptPhoto(this,'new')"><input id="receipt-photo-gallery" type="file" accept="image/*" hidden onchange="readReceiptPhoto(this,'new')">
-        <div class="pills"><button type="button" class="link" onclick="$('receipt-photo-camera').click()">📷 Fotoaparat</button><button type="button" class="link" onclick="$('receipt-photo-gallery').click()">🖼️ Uvozi iz galerije</button></div><span id="photo-status" class="hint"></span><div id="photo-candidates" class="pills"></div><button id="ai-read-new" type="button" class="link" hidden onclick="readPhotoWithGemini('new')">🤖 Poskusi z Gemini</button>
+        <div class="pills photo-actions"><button type="button" class="link" onclick="$('receipt-photo-camera').click()">📷 Fotoaparat</button><button type="button" class="link" onclick="$('receipt-photo-gallery').click()">🖼️ Uvozi iz galerije</button></div><span id="photo-status" class="hint"></span>
       </div>
       <button class="savebtn" onclick="saveEntry()">Shrani račun v zgodovino</button>
     </div>
@@ -226,7 +224,7 @@ dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
       <div class="notefield">
         <label class="lab" for="e-note">Opomba</label>
         <input id="e-note" class="in pl" maxlength="200" list="saved-notes" placeholder="npr. stranka, vozilo, opomba">
-        <input id="edit-photo-camera" type="file" accept="image/*" capture="environment" hidden onchange="readReceiptPhoto(this,'edit')"><input id="edit-photo-gallery" type="file" accept="image/*" hidden onchange="readReceiptPhoto(this,'edit')"><div class="pills"><button type="button" class="link" onclick="$('edit-photo-camera').click()">📷 Fotoaparat</button><button type="button" class="link" onclick="$('edit-photo-gallery').click()">🖼️ Uvozi iz galerije</button></div><span id="edit-photo-status" class="hint"></span><div id="edit-photo-candidates" class="pills"></div><button id="ai-read-edit" type="button" class="link" hidden onclick="readPhotoWithGemini('edit')">🤖 Poskusi z Gemini</button>
+        <input id="edit-photo-camera" type="file" accept="image/*" capture="environment" hidden onchange="readReceiptPhoto(this,'edit')"><input id="edit-photo-gallery" type="file" accept="image/*" hidden onchange="readReceiptPhoto(this,'edit')"><div class="pills photo-actions"><button type="button" class="link" onclick="$('edit-photo-camera').click()">📷 Fotoaparat</button><button type="button" class="link" onclick="$('edit-photo-gallery').click()">🖼️ Uvozi iz galerije</button></div><span id="edit-photo-status" class="hint"></span>
       </div>
       <div class="etot"><span>Znesek</span><b id="e-total">0,00 €</b></div>
       <div class="btns">
@@ -237,13 +235,12 @@ dialog::backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
     </div>
   </dialog>
 
-  <dialog id="cropDlg"><div style="display:grid;gap:14px;width:min(82vw,760px)"><div><h2>Označi prikaz litrov</h2><p class="hint">S prstom ali miško označi samo številke na števcu. Tako bo OCR prezrl ostale podatke na fotografiji.</p></div><canvas id="cropCanvas" class="crop-canvas"></canvas><div class="btns"><button class="btn" onclick="finishCrop(false)">Prepoznaj celo sliko</button><button class="btn pri" onclick="finishCrop(true)">Prepoznaj označeno</button></div></div></dialog>
-  <dialog id="geminiSettings"><div style="display:grid;gap:14px"><div class="row"><h2>Nastavitve Gemini</h2><button class="x" onclick="$('geminiSettings').close()" aria-label="Zapri">×</button></div><p class="hint">Ključ se shrani samo v ta brskalnik. Pri uporabi se pošlje neposredno Googlu; ne shrani ga v javno datoteko ali GitHub.</p><label class="lab" for="gemini-key">Gemini API ključ</label><input id="gemini-key" class="in pl" type="password" autocomplete="off" placeholder="Prilepi ključ iz Google AI Studio"><a class="link" href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener">Odpri Google AI Studio · API keys</a><div class="btns"><button class="btn" onclick="clearGeminiKey()">Odstrani ključ</button><button class="btn pri" onclick="saveGeminiKey()">Shrani ključ</button></div></div></dialog>
   <div id="toast">Znesek kopiran v odložišče!</div>
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
+try { localStorage.removeItem('gemini_api_key'); } catch (e) {}
 const fmt = (n, d = 2) => n.toFixed(d).replace('.', ',');
 const K = { diesel: 'diesel', petrol: 'petrol95' };
 const NAME = { diesel: 'dizla', petrol: 'bencina 95' };
@@ -398,22 +395,7 @@ const EDIT_IC = '<svg class="ic" fill="none" stroke="currentColor" stroke-width=
 let newPhoto = '', editPhoto = '';
 function saveLog() { ls('fuel_log', JSON.stringify(log)); renderLog(); renderNoteChoices(); window.dispatchEvent(new CustomEvent('fuel-log-changed',{detail:log})); }
 function resizePhoto(file) { return new Promise((resolve,reject)=>{ const im=new Image(), u=URL.createObjectURL(file); im.onload=()=>{const scale=Math.min(1,1400/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*scale);c.height=Math.round(im.height*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);resolve(c.toDataURL('image/jpeg',.76));};im.onerror=reject;im.src=u; }); }
-const latestMeterImage={};
-async function readReceiptPhoto(input,where) { const file=input.files&&input.files[0];if(!file)return;try{const data=await resizePhoto(file);if(where==='new'){newPhoto=data;$('photo-status').textContent='Izberi območje števca za natančnejšo prepoznavo.';}else{editPhoto=data;$('edit-photo-status').textContent='Izberi območje števca za natančnejšo prepoznavo.';}const focused=await selectMeterArea(data);latestMeterImage[where]=focused;$('ai-read-'+(where==='new'?'new':'edit')).hidden=false;await recognizeLiters(focused,where);}catch(e){showToast('Fotografije ni bilo mogoče prebrati.');}finally{input.value='';} }
-function openGeminiSettings(){ $('gemini-key').value=localStorage.getItem('gemini_api_key')||'';$('geminiSettings').showModal(); }
-function saveGeminiKey(){const k=$('gemini-key').value.trim();if(!k){showToast('Vnesi API ključ ali ga odstrani.');return;}localStorage.setItem('gemini_api_key',k);$('geminiSettings').close();showToast('Gemini API ključ je shranjen v tem brskalniku.');}
-function clearGeminiKey(){localStorage.removeItem('gemini_api_key');$('gemini-key').value='';$('geminiSettings').close();showToast('Gemini API ključ je odstranjen.');}
-async function imageAsDataUrl(src){if(src.startsWith('data:'))return src;const res=await fetch(src);if(!res.ok)throw new Error('Fotografije ni mogoče naložiti.');const blob=await res.blob();return await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(blob);});}
-async function readPhotoWithGemini(where){const key=localStorage.getItem('gemini_api_key');if(!key){openGeminiSettings();showToast('Najprej vnesi Gemini API ključ.');return;}let image=latestMeterImage[where];if(!image&&where==='edit'&&editPhoto)image=editPhoto;if(!image){showToast('Najprej izberi fotografijo in označi zaslon števca.');return;}const status=$(where==='new'?'photo-status':'edit-photo-status'),button=$('ai-read-'+(where==='new'?'new':'edit'));button.disabled=true;status.textContent='Gemini bere prikaz…';try{const dataUrl=await imageAsDataUrl(image),mime=dataUrl.slice(5,dataUrl.indexOf(';')),data=dataUrl.slice(dataUrl.indexOf(',')+1);const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{parts:[{text:'Preberi samo količino točenega goriva v litrih z digitalnega števca na fotografiji. Ne zamenjaj je s ceno na liter ali zneskom. Če prikaz ni jasen, vrni liters: 0 in nizko confidence. Decimalno ločilo obravnavaj kot decimalno vejico. Vrni samo JSON z liters (število), confidence (0–1) in display (prepis prikazanih številk). Ne ugibaj.'},{inline_data:{mime_type:mime,data}}]}],generationConfig:{temperature:0,responseMimeType:'application/json',responseSchema:{type:'OBJECT',properties:{liters:{type:'NUMBER'},confidence:{type:'NUMBER'},display:{type:'STRING'}},required:['liters','confidence','display']}}})});const payload=await res.json();if(!res.ok)throw new Error(payload.error?.message||'Gemini zahteva ni uspela.');const txt=payload.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'';const result=JSON.parse(txt.replace(/^```(?:json)?\s*|\s*```$/g,''));const n=Number(result.liters),conf=Number(result.confidence);if(!(n>0&&n<10000))throw new Error('Gemini ni mogel zanesljivo prebrati litrov.');chooseLiters(n,where);const pct=Number.isFinite(conf)?Math.round(Math.max(0,Math.min(1,conf))*100):0;status.textContent=`Gemini predlaga ${fmt(n)} l · prikaz ${result.display} · zanesljivost ${pct} %. Preveri pred shranjevanjem.`;}catch(e){status.textContent='Gemini ni uspel: '+e.message;showToast('Prepoznava Gemini ni uspela.');}finally{button.disabled=false;}}
-let cropImage=null,cropRect=null,cropStart=null,cropResolve=null,cropOriginal='';
-function selectMeterArea(data){cropOriginal=data;cropRect=null;return new Promise(resolve=>{cropResolve=resolve;const im=new Image();im.onload=()=>{cropImage=im;const c=$('cropCanvas'),scale=Math.min(1,900/im.width,560/im.height);c.width=Math.round(im.width*scale);c.height=Math.round(im.height*scale);drawCropCanvas();$('cropDlg').showModal();};im.onerror=()=>resolve(data);im.src=data;});}
-function drawCropCanvas(){const c=$('cropCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(cropImage,0,0,c.width,c.height);if(cropRect){ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(0,0,c.width,c.height);ctx.clearRect(cropRect.x,cropRect.y,cropRect.w,cropRect.h);ctx.drawImage(cropImage,cropRect.x/c.width*cropImage.width,cropRect.y/c.height*cropImage.height,cropRect.w/c.width*cropImage.width,cropRect.h/c.height*cropImage.height,cropRect.x,cropRect.y,cropRect.w,cropRect.h);ctx.strokeStyle='#fbbf24';ctx.lineWidth=3;ctx.strokeRect(cropRect.x,cropRect.y,cropRect.w,cropRect.h);}}
-const cropCanvas=$('cropCanvas');cropCanvas.addEventListener('pointerdown',e=>{const r=cropCanvas.getBoundingClientRect(),x=(e.clientX-r.left)*cropCanvas.width/r.width,y=(e.clientY-r.top)*cropCanvas.height/r.height;cropStart={x,y};cropRect={x,y,w:0,h:0};cropCanvas.setPointerCapture(e.pointerId);drawCropCanvas();});cropCanvas.addEventListener('pointermove',e=>{if(!cropStart)return;const r=cropCanvas.getBoundingClientRect(),x=(e.clientX-r.left)*cropCanvas.width/r.width,y=(e.clientY-r.top)*cropCanvas.height/r.height;cropRect={x:Math.max(0,Math.min(cropStart.x,x)),y:Math.max(0,Math.min(cropStart.y,y)),w:Math.abs(x-cropStart.x),h:Math.abs(y-cropStart.y)};drawCropCanvas();});cropCanvas.addEventListener('pointerup',()=>{cropStart=null;});
-function finishCrop(useSelection){let result=cropOriginal;if(useSelection&&cropRect&&cropRect.w>15&&cropRect.h>15){const sx=Math.round(cropRect.x/cropCanvas.width*cropImage.width),sy=Math.round(cropRect.y/cropCanvas.height*cropImage.height),sw=Math.round(cropRect.w/cropCanvas.width*cropImage.width),sh=Math.round(cropRect.h/cropCanvas.height*cropImage.height),out=document.createElement('canvas');out.width=sw;out.height=sh;out.getContext('2d').drawImage(cropImage,sx,sy,sw,sh,0,0,sw,sh);result=out.toDataURL('image/jpeg',.92);}if(cropResolve){cropResolve(result);cropResolve=null;}$('cropDlg').close();}
-$('cropDlg').addEventListener('close',()=>{if(cropResolve){cropResolve(cropOriginal);cropResolve=null;}});
-function photoVariants(data){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{const w=Math.min(2200,Math.max(im.width,1000)),scale=w/im.width,h=Math.round(im.height*scale),base=document.createElement('canvas');base.width=w;base.height=h;base.getContext('2d').drawImage(im,0,0,w,h);const variants=[base.toDataURL('image/png')];for(const cut of [120,165]){const c=document.createElement('canvas');c.width=w;c.height=h;const src=base.getContext('2d').getImageData(0,0,w,h),ctx=c.getContext('2d'),out=ctx.createImageData(w,h);for(let i=0;i<src.data.length;i+=4){const y=.299*src.data[i]+.587*src.data[i+1]+.114*src.data[i+2],v=y>cut?255:0;out.data[i]=out.data[i+1]=out.data[i+2]=v;out.data[i+3]=255;}ctx.putImageData(out,0,0);variants.push(c.toDataURL('image/png'));}resolve(variants);};im.onerror=reject;im.src=data;});}
-function chooseLiters(value,where){const id=where==='new'?'liters':'e-liters';$(id).value=String(value);if(where==='new')calculate();else editPreview();}
-async function recognizeLiters(data,where){const candEl=$(where==='new'?'photo-candidates':'edit-photo-candidates'),status=$(where==='new'?'photo-status':'edit-photo-status');try{if(!window.Tesseract){await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s);});}const worker=await Tesseract.createWorker('eng',1);await worker.setParameters({tessedit_char_whitelist:'0123456789,.'});const counts=new Map();for(const variant of await photoVariants(data)){const r=await worker.recognize(variant),txt=r.data.text.replace(/\s/g,' ').replace(/,/g,'.');for(const m of txt.matchAll(/\b(\d{1,5}(?:\.\d{1,3})?)\b/g)){const value=Number(m[1]);if(value>0&&value<10000){const old=counts.get(value)||{n:0,c:0};old.n++;old.c+=r.data.confidence||0;counts.set(value,old);}}}await worker.terminate();const vals=[...counts].sort((a,b)=>b[1].n-a[1].n||b[1].c-a[1].c||b[0]-a[0]).slice(0,5).map(x=>x[0]);if(vals.length){chooseLiters(vals[0],where);candEl.innerHTML='<span class="hint">Predlogi (izberi pravilnega):</span>'+vals.map(v=>`<button type="button" class="link" data-value="${v}">${fmt(v,Number.isInteger(v)?0:2)} l</button>`).join('');candEl.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>chooseLiters(b.dataset.value,where)));status.textContent='Prepoznava je predlog; preveri zaslon in izberi pravilno količino.';}else{candEl.innerHTML='';status.textContent='Številke nisem zanesljivo prepoznal – količino vnesi ročno.';}}catch(e){candEl.innerHTML='';status.textContent='Samodejno branje ni uspelo; količino vnesi ročno.';} }
+async function readReceiptPhoto(input,where) { const file=input.files&&input.files[0];if(!file)return;try{const data=await resizePhoto(file);if(where==='new'){newPhoto=data;$('photo-status').textContent='Fotografija pripravljena za shranjevanje.';}else{editPhoto=data;$('edit-photo-status').textContent='Fotografija pripravljena za shranjevanje.';}}catch(e){showToast('Fotografije ni bilo mogoče prebrati.');}finally{input.value='';} }
 function renderNoteChoices(){const opts=[...new Set(log.map(x=>(x.n||'').trim()).filter(Boolean))];$('saved-notes').innerHTML=opts.map(n=>`<option value="${esc(n)}"></option>`).join('');}
 function openPhoto(data){if(data)window.open(data,'_blank','noopener');}
 
@@ -426,7 +408,7 @@ function saveEntry() {
   log.unshift({ id: Date.now(), t: new Date().toISOString(), f: activeTab, p: price, l, d: disc, n: note, photo:newPhoto||'', tot: Math.max(0, price - disc / 100) * l });
   saveLog();
   $('note').value = '';
-  newPhoto=''; $('photo-status').textContent=''; $('photo-candidates').innerHTML=''; $('receipt-photo-camera').value='';$('receipt-photo-gallery').value='';latestMeterImage.new=null;$('ai-read-new').hidden=true;
+  newPhoto=''; $('photo-status').textContent='';  $('receipt-photo-camera').value='';$('receipt-photo-gallery').value='';
   showToast('Račun je shranjen.');
 }
 
@@ -456,7 +438,7 @@ function openEdit(id) {
   $('e-disc').value = x.d || 0;
   $('e-note').value = x.n || '';
   editPhoto=x.photo||'';$('edit-photo-status').textContent=editPhoto?'Fotografija je shranjena.':'';
-  latestMeterImage.edit=x.photo||null;$('ai-read-edit').hidden=!x.photo;
+  
   editPreview();
   $('editDlg').showModal();
 }
